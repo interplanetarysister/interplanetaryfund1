@@ -10,6 +10,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { useState, useMemo, useCallback, useEffect, lazy, Suspense } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
+import { Analytics } from "@vercel/analytics/react";
 
 // Lazy load pages
 const Explore = lazy(() => import("./pages/Explore"));
@@ -407,6 +408,7 @@ export default function App() {
         </nav>
       )}
     </div>
+    <Analytics />
     </TermsAcceptance>
   );
 }
