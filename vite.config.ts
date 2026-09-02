@@ -24,9 +24,14 @@ export default defineConfig({
     rollupOptions: {
       output: {
         banner: "/* Interplanetary Fund © 2026 Michelle Rogers. All Rights Reserved. PROPRIETARY. */",
-        manualChunks: {
-          "react-vendor": ["react", "react-dom"],
-          "convex-vendor": ["convex/react", "convex"],
+        manualChunks(id) {
+          if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) {
+            return "react-vendor";
+          }
+          if (id.includes("node_modules/convex")) {
+            return "convex-vendor";
+          }
+          return undefined;
         },
       },
     },
