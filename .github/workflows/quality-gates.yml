@@ -1,35 +1,24 @@
-name: Quality Gates
-
+# Legacy job retained as an on-demand, read-only LIVE frontend check.
+# Automatically scheduled jobs and all legacy code builds are retired.
+name: "Live IFund Frontend - Public assets"
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
 permissions:
   contents: read
-
 jobs:
-  verify:
-    runs-on: ubuntu-latest
+  frontend-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
-
-      - name: Set up Node.js 24
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        shell: bash
+      - name: Check published IFund homepage
         run: |
-          if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
-            npm ci
-          else
-            npm install --ignore-scripts
-          fi
-
-      - name: Build
-        run: npm run build
+          set -euo pipefail
+          curl -fsSL --max-time 20 https://interplanetaryfund.com/ -o /tmp/ifund-home.html
+          grep -Eiq '<html|<!doctype' /tmp/ifund-home.html
+          echo "Published homepage returned an HTML document."
+      - name: Check published Base44 frontend
+        run: |
+          set -euo pipefail
+          curl -fsSL --max-time 20 https://interplanetaryfund.base44.app/ -o /tmp/ifund-base44.html
+          grep -Eiq '<html|<!doctype' /tmp/ifund-base44.html
+          echo "Base44 frontend returned an HTML document."
